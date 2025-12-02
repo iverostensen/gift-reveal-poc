@@ -7,7 +7,7 @@ export interface Gift {
   currency: 'NOK';
   personalMessage?: string;
   senderName: string;
-  animationType: 'birthday' | 'wedding' | 'generic';
+  animationType: 'birthday' | 'wedding' | 'generic' | 'christmas';
   expiryDate?: Date;
   isOpened: boolean;
   isActivated: boolean;
