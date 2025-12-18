@@ -202,17 +202,88 @@ export class GiftRevealController {
   }
 
   private handleTransfer(gift: Gift): void {
-    // Get transfer link (would be used in production)
-    this.giftService.getTransferLink(gift.code);
-
-    // For demo: Show a message instead of actual deep link
-    alert('I en ekte implementasjon ville dette åpnet Mine Gavekort-appen');
-
     // Update state
     this.state.step = 'transferred';
 
-    // Show transferred state
-    this.showTransferred(gift);
+    // Show pickup code page
+    this.showPickupCode(gift);
+  }
+
+  private showPickupCode(gift: Gift): void {
+    // Generate a formatted pickup code for the POC
+    const pickupCode = 'HRF-R4K-TUE';
+
+    this.container.innerHTML = `
+      <div class="pickup-code-container">
+        <div class="pickup-header">
+          <div class="success-icon">✓</div>
+          <h1>Gavekortet er klart!</h1>
+          <p class="subtitle">Bruk hentekoden nedenfor for å legge gavekortet i Mine Gavekort-appen</p>
+        </div>
+
+        <div class="pickup-code-card">
+          <span class="code-label">Din hentekode</span>
+          <div class="pickup-code">${pickupCode}</div>
+          <button class="copy-button" id="copy-code">
+            Kopier kode
+          </button>
+        </div>
+
+        <div class="gift-summary">
+          <div class="vendor-logo-small">
+            <div class="placeholder-logo">${gift.vendorName.charAt(0)}</div>
+          </div>
+          <div class="summary-details">
+            <span class="vendor">${gift.vendorName}</span>
+            <span class="amount">${gift.amount} kr</span>
+          </div>
+        </div>
+
+        <div class="instructions">
+          <h3>Slik henter du gavekortet:</h3>
+          <ol>
+            <li>Last ned <strong>Mine Gavekort</strong>-appen</li>
+            <li>Åpne appen og velg "Legg til gavekort"</li>
+            <li>Skriv inn hentekoden: <strong>${pickupCode}</strong></li>
+          </ol>
+        </div>
+
+        <div class="app-download">
+          <a href="https://apps.apple.com/no/app/mine-gavekort/id1234567890" class="store-button" target="_blank">
+            <span class="store-icon">🍎</span>
+            App Store
+          </a>
+          <a href="https://play.google.com/store/apps/details?id=no.minegavekort" class="store-button" target="_blank">
+            <span class="store-icon">▶️</span>
+            Google Play
+          </a>
+        </div>
+
+        <div class="more-animations-section">
+          <p class="more-animations-title">Se flere animasjoner</p>
+          <div class="animation-buttons">
+            <a href="/g/TEST1234" class="animation-btn">🎂 Bursdag</a>
+            <a href="/g/TESTFAR" class="animation-btn">👔 Farsdag</a>
+            <a href="/g/TESTBRYL" class="animation-btn">💍 Bryllup</a>
+            <a href="/g/TESTBAL" class="animation-btn">🎈 Ballong</a>
+            <a href="/g/TESTJUL" class="animation-btn">🎄 Jul</a>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Add copy functionality
+    document.getElementById('copy-code')?.addEventListener('click', () => {
+      navigator.clipboard.writeText(pickupCode).then(() => {
+        const btn = document.getElementById('copy-code');
+        if (btn) {
+          btn.textContent = 'Kopiert! ✓';
+          setTimeout(() => {
+            btn.textContent = 'Kopier kode';
+          }, 2000);
+        }
+      });
+    });
   }
 
   private showAlreadyActivated(gift: Gift): void {
@@ -224,20 +295,6 @@ export class GiftRevealController {
            er allerede lagt til i Mine Gavekort-appen.</p>
         <button class="cta-button" onclick="alert('Ville åpnet Mine Gavekort-appen')">
           Åpne Mine Gavekort
-        </button>
-      </div>
-    `;
-  }
-
-  private showTransferred(gift: Gift): void {
-    this.container.innerHTML = `
-      <div class="status-container transferred">
-        <div class="status-icon">🎉</div>
-        <h1>Gratulerer!</h1>
-        <p>Gavekortet ditt på <strong>${gift.amount} kr</strong> til <strong>${gift.vendorName}</strong>
-           er nå klart til bruk!</p>
-        <button class="cta-button" onclick="window.location.reload()">
-          Test på nytt
         </button>
       </div>
     `;

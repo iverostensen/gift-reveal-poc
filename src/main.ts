@@ -38,62 +38,51 @@ class App {
   }
 
   private showHomepage(): void {
+    // Get current date for the iMessage timestamp
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long' });
+    const timeStr = now.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit' });
+
     this.container.innerHTML = `
-      <div class="homepage">
-        <h1>🎁 Gift Reveal PoC</h1>
-        <p>Interaktiv gavekortåpning med <strong>Anime.js</strong> animasjoner</p>
+      <div class="imessage-screen">
+        <div class="imessage-app">
+          <div class="imessage-header">
+            <span class="back-button">‹</span>
+            <div class="contact-avatar">🎁</div>
+            <div class="contact-info">
+              <div class="contact-name">GAVEKORT</div>
+              <div class="contact-status">iMessage</div>
+            </div>
+            <div class="header-icons">
+              <span class="header-icon">📹</span>
+              <span class="header-icon">📞</span>
+            </div>
+          </div>
 
-        <div class="engine-section" style="background: linear-gradient(135deg, #fff5f7 0%, #ffe8ec 100%); border: 2px solid #ff1744;">
-          <h2>✨ Test Gift Reveal (1 trykk)</h2>
-          <div class="test-links">
-            <a href="/g/TEST1234" class="test-link anime" style="font-size: 18px; padding: 20px 24px;">
-              <span class="link-label">🎂 Bursdagsgave</span>
-              <span class="link-code">TEST1234</span>
-            </a>
-            <a href="/g/TESTFAR" class="test-link anime">
-              <span class="link-label">👔 Farsdag</span>
-              <span class="link-code">TESTFAR</span>
-            </a>
-            <a href="/g/TESTBRYL" class="test-link anime">
-              <span class="link-label">💍 Bryllupsgave (Ring)</span>
-              <span class="link-code">TESTBRYL</span>
-            </a>
-            <a href="/g/TESTBAL" class="test-link anime">
-              <span class="link-label">🎈 Ballong (Sprekker!)</span>
-              <span class="link-code">TESTBAL</span>
-            </a>
-            <a href="/g/TESTJUL" class="test-link anime" style="background: linear-gradient(135deg, #C41E3A 0%, #165B33 100%); color: white;">
-              <span class="link-label">🎄 Julegave (Stjerne!)</span>
-              <span class="link-code">TESTJUL</span>
+          <div class="imessage-chat">
+            <div class="imessage-date">${dateStr.charAt(0).toUpperCase() + dateStr.slice(1)} ${timeStr}</div>
+
+            <div class="imessage-bubble received">
+              Hei Ola Halvorsen! Kari Nordmann har sendt deg et gavekort fra H&M.<br><br>Se gaven din her: <a href="/g/TEST1234" class="imessage-link">minegavekort.app/g/TEST1234</a><br><br>Hilsen oss i H&M
+            </div>
+
+            <a href="/g/TEST1234" class="imessage-link-preview" id="gift-link">
+              <div class="link-preview-image">
+                <span class="preview-gift-icon">🎁</span>
+              </div>
+              <div class="link-preview-content">
+                <div class="link-preview-domain">minegavekort.app</div>
+                <div class="link-preview-title">Du har fått et gavekort!</div>
+                <div class="link-preview-description">Trykk for å åpne gaven din</div>
+              </div>
             </a>
           </div>
-          <p style="margin-top: 16px; font-size: 14px; color: #666;">
-            <strong>Hver animasjon er unik!</strong> Bursdagsgave har gaveboks, Farsdag har maskulin boks, Bryllup har ringboks med diamant, Ballong sprekker, Julegave har stjerne og snø! 🎄✨
-          </p>
-        </div>
 
-        <div class="engine-section">
-          <h3>⚠️ Test error states:</h3>
-          <div class="test-links">
-            <a href="/g/TESTUSED" class="test-link">
-              <span class="link-label">✅ Allerede aktivert</span>
-              <span class="link-code">TESTUSED</span>
-            </a>
-            <a href="/g/TESTERR1" class="test-link">
-              <span class="link-label">❌ Feil - finnes ikke</span>
-              <span class="link-code">TESTERR1</span>
-            </a>
+          <div class="imessage-input-bar">
+            <button class="input-button">+</button>
+            <input type="text" class="message-input" placeholder="iMessage" disabled>
+            <button class="input-button">🎤</button>
           </div>
-        </div>
-
-        <div class="engine-section" style="background: #f9f9f9;">
-          <h3>📦 Teknisk info</h3>
-          <ul style="text-align: left; font-size: 14px; color: #666; line-height: 1.8;">
-            <li><strong>Framework:</strong> Vite + TypeScript</li>
-            <li><strong>Animasjoner:</strong> Anime.js (~8 KB)</li>
-            <li><strong>Konfetti:</strong> Canvas Confetti</li>
-            <li><strong>Mobile-first:</strong> Optimalisert for iOS Safari/Chrome</li>
-          </ul>
         </div>
       </div>
     `;
