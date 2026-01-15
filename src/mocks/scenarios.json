@@ -1,8 +1,8 @@
 {
   "TEST1234": {
     "id": "550e8400-e29b-41d4-a716-446655440000",
-    "vendorName": "H&M",
-    "vendorLogoUrl": "/images/vendors/placeholder-logo.svg",
+    "vendorName": "Scala Kjøpesentre",
+    "vendorLogoUrl": "/images/vendors/scala-logo.png",
     "amount": 500,
     "currency": "NOK",
     "personalMessage": "Gratulerer med dagen! Håper du finner noe fint 🎉",

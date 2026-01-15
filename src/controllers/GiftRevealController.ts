@@ -46,36 +46,40 @@ export class GiftRevealController {
   private async renderGiftBox(gift: Gift): Promise<void> {
     this.currentGift = gift; // Store gift for later use
     this.container.innerHTML = `
-      <div class="gift-reveal-container">
-        <div class="gift-header">
-          <p class="sender-text">Fra ${gift.senderName}</p>
-        </div>
-
-        <div class="gift-box-wrapper">
-          <div id="animation-container"></div>
-          <div class="tap-indicator visible">
-            <span class="tap-count">${this.state.tapsRemaining}</span>
-            <span class="tap-text">trykk for å åpne</span>
+      <div class="phone-frame">
+        <div class="gift-reveal-container">
+          <div class="gift-header">
+            <p class="sender-text">Fra ${gift.senderName}</p>
           </div>
-        </div>
 
-        <div class="gift-content hidden" id="gift-content">
-          <div class="gift-card">
-            <div class="vendor-info">
-              <div class="vendor-logo">
-                <div class="placeholder-logo">${gift.vendorName.charAt(0)}</div>
-              </div>
-              <h2 class="vendor-name">${gift.vendorName}</h2>
+          <div class="gift-box-wrapper">
+            <div id="animation-container"></div>
+            <div class="tap-indicator visible">
+              <span class="tap-count">${this.state.tapsRemaining}</span>
+              <span class="tap-text">trykk for å åpne</span>
             </div>
-            <h1 class="gift-amount">${gift.amount} kr</h1>
+          </div>
+
+          <div class="gift-content hidden" id="gift-content">
+            <div class="reveal-hero">
+              <div class="reveal-logo animate-in">
+                ${gift.vendorLogoUrl && !gift.vendorLogoUrl.includes('placeholder')
+                  ? `<img src="${gift.vendorLogoUrl}" alt="${gift.vendorName}" class="reveal-logo-img">`
+                  : `<div class="reveal-logo-placeholder">${gift.vendorName.charAt(0)}</div>`
+                }
+              </div>
+              <h1 class="reveal-amount animate-in"><span id="amount-counter">0</span> kr</h1>
+            </div>
+
             ${gift.personalMessage ? `
-              <div class="message-card">
-                <p>${gift.personalMessage}</p>
-                <span class="sender">- ${gift.senderName}</span>
+              <div class="message-card-reveal animate-in-delayed">
+                <p class="message-text">${gift.personalMessage}</p>
+                <span class="message-sender">— ${gift.senderName}</span>
               </div>
             ` : ''}
-            <button class="cta-button" id="transfer-button">
-              Hent gavekortet 🎁
+
+            <button class="cta-button reveal-cta animate-in" id="transfer-button">
+              Hent gavekortet
             </button>
           </div>
         </div>
@@ -196,17 +200,60 @@ export class GiftRevealController {
           content.style.opacity = '1';
         });
       });
+
+      // Start count-up animation for amount
+      this.animateAmountCounter();
     }
 
     this.state.step = 'revealed';
+  }
+
+  private animateAmountCounter(): void {
+    const counter = document.getElementById('amount-counter');
+    if (!counter || !this.currentGift) return;
+
+    const targetAmount = this.currentGift.amount;
+    const duration = 1400; // ms
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Easing function (ease-out)
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const currentValue = Math.round(easeOut * targetAmount);
+
+      counter.textContent = currentValue.toString();
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    // Start animation after a small delay
+    setTimeout(() => {
+      requestAnimationFrame(animate);
+    }, 200);
   }
 
   private handleTransfer(gift: Gift): void {
     // Update state
     this.state.step = 'transferred';
 
-    // Show pickup code page
-    this.showPickupCode(gift);
+    // Animate out current content, then show pickup page
+    const phoneFrame = this.container.querySelector('.phone-frame') as HTMLElement;
+    if (phoneFrame) {
+      phoneFrame.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      phoneFrame.style.opacity = '0';
+      phoneFrame.style.transform = 'scale(0.98)';
+
+      setTimeout(() => {
+        this.showPickupCode(gift);
+      }, 300);
+    } else {
+      this.showPickupCode(gift);
+    }
   }
 
   private showPickupCode(gift: Gift): void {
@@ -214,70 +261,89 @@ export class GiftRevealController {
     const pickupCode = 'HRF-R4K-TUE';
 
     this.container.innerHTML = `
-      <div class="pickup-code-container">
-        <div class="pickup-header">
-          <div class="success-icon">✓</div>
-          <h1>Gavekortet er klart!</h1>
-          <p class="subtitle">Bruk hentekoden nedenfor for å legge gavekortet i Mine Gavekort-appen</p>
-        </div>
-
-        <div class="pickup-code-card">
-          <span class="code-label">Din hentekode</span>
-          <div class="pickup-code">${pickupCode}</div>
-          <button class="copy-button" id="copy-code">
-            Kopier kode
-          </button>
-        </div>
-
-        <div class="gift-summary">
-          <div class="vendor-logo-small">
-            <div class="placeholder-logo">${gift.vendorName.charAt(0)}</div>
+      <div class="phone-frame">
+        <div class="pickup-page">
+          <div class="pickup-header">
+            <div class="pickup-gift-summary">
+              ${gift.vendorLogoUrl && !gift.vendorLogoUrl.includes('placeholder')
+                ? `<img src="${gift.vendorLogoUrl}" alt="${gift.vendorName}" class="pickup-vendor-logo">`
+                : `<span class="pickup-vendor-name">${gift.vendorName}</span>`
+              }
+              <span class="pickup-amount">${gift.amount} kr</span>
+            </div>
           </div>
-          <div class="summary-details">
-            <span class="vendor">${gift.vendorName}</span>
-            <span class="amount">${gift.amount} kr</span>
+
+          <div class="pickup-instructions">
+            <h1 class="pickup-title">Hent gavekortet ditt</h1>
+            <p class="pickup-subtitle">Bruk koden under i Mine Gavekort-appen</p>
+
+            <div class="pickup-code-display">
+              <span class="code-text">${pickupCode}</span>
+            </div>
+            <button class="code-copy-btn" id="copy-code">Kopier kode</button>
+
+            <div class="pickup-steps">
+              <div class="pickup-step">
+                <span class="step-number">1</span>
+                <span class="step-text">Last ned Mine Gavekort-appen</span>
+              </div>
+              <div class="pickup-step">
+                <span class="step-number">2</span>
+                <span class="step-text">Skriv inn koden i appen</span>
+              </div>
+              <div class="pickup-step">
+                <span class="step-number">3</span>
+                <span class="step-text">Følg instruksjonene for å legge til i lommeboken</span>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div class="instructions">
-          <h3>Slik henter du gavekortet:</h3>
-          <ol>
-            <li>Last ned <strong>Mine Gavekort</strong>-appen</li>
-            <li>Åpne appen og velg "Legg til gavekort"</li>
-            <li>Skriv inn hentekoden: <strong>${pickupCode}</strong></li>
-          </ol>
-        </div>
+          <div class="pickup-actions">
+            <a href="minegavekort://redeem?code=${pickupCode}" class="pickup-primary-btn">
+              Åpne Mine Gavekort
+            </a>
+            <div class="pickup-app-stores">
+              <a href="https://apps.apple.com/no/app/mine-gavekort/id123456" class="app-store-btn">
+                <span class="store-icon">🍎</span>
+                <span class="store-text">App Store</span>
+              </a>
+              <a href="https://play.google.com/store/apps/details?id=no.minegavekort" class="app-store-btn">
+                <span class="store-icon">▶</span>
+                <span class="store-text">Google Play</span>
+              </a>
+            </div>
+          </div>
 
-        <div class="app-download">
-          <a href="https://apps.apple.com/no/app/mine-gavekort/id1234567890" class="store-button" target="_blank">
-            <span class="store-icon">🍎</span>
-            App Store
-          </a>
-          <a href="https://play.google.com/store/apps/details?id=no.minegavekort" class="store-button" target="_blank">
-            <span class="store-icon">▶️</span>
-            Google Play
-          </a>
-        </div>
-
-        <div class="more-animations-section">
-          <p class="more-animations-title">Se flere animasjoner</p>
-          <div class="animation-buttons">
-            <a href="/g/TEST1234" class="animation-btn">🎂 Bursdag</a>
-            <a href="/g/TESTFAR" class="animation-btn">👔 Farsdag</a>
-            <a href="/g/TESTBRYL" class="animation-btn">💍 Bryllup</a>
-            <a href="/g/TESTBAL" class="animation-btn">🎈 Ballong</a>
-            <a href="/g/TESTJUL" class="animation-btn">🎄 Jul</a>
+          <div class="pickup-demo-links">
+            <span class="demo-label">Demo:</span>
+            <a href="/g/TEST1234">🎂</a>
+            <a href="/g/TESTFAR">👔</a>
+            <a href="/g/TESTBRYL">💍</a>
+            <a href="/g/TESTBAL">🎈</a>
+            <a href="/g/TESTJUL">🎄</a>
           </div>
         </div>
       </div>
     `;
+
+    // Animate in the new page
+    const phoneFrame = this.container.querySelector('.phone-frame') as HTMLElement;
+    if (phoneFrame) {
+      phoneFrame.style.opacity = '0';
+      phoneFrame.style.transform = 'scale(0.98)';
+      requestAnimationFrame(() => {
+        phoneFrame.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        phoneFrame.style.opacity = '1';
+        phoneFrame.style.transform = 'scale(1)';
+      });
+    }
 
     // Add copy functionality
     document.getElementById('copy-code')?.addEventListener('click', () => {
       navigator.clipboard.writeText(pickupCode).then(() => {
         const btn = document.getElementById('copy-code');
         if (btn) {
-          btn.textContent = 'Kopiert! ✓';
+          btn.textContent = 'Kopiert!';
           setTimeout(() => {
             btn.textContent = 'Kopier kode';
           }, 2000);
