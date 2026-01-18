@@ -302,16 +302,6 @@ export class GiftRevealController {
             <a href="minegavekort://redeem?code=${pickupCode}" class="pickup-primary-btn">
               Åpne Mine Gavekort
             </a>
-            <div class="pickup-app-stores">
-              <a href="https://apps.apple.com/no/app/mine-gavekort/id123456" class="app-store-btn">
-                <span class="store-icon">🍎</span>
-                <span class="store-text">App Store</span>
-              </a>
-              <a href="https://play.google.com/store/apps/details?id=no.minegavekort" class="app-store-btn">
-                <span class="store-icon">▶</span>
-                <span class="store-text">Google Play</span>
-              </a>
-            </div>
           </div>
 
           <div class="pickup-demo-links">
