@@ -16,9 +16,15 @@ export class MockGiftService implements IGiftService {
       throw new Error(scenario.error);
     }
 
+    // Prefix vendorLogoUrl with base URL for GitHub Pages compatibility
+    const vendorLogoUrl = scenario.vendorLogoUrl
+      ? `${import.meta.env.BASE_URL}${scenario.vendorLogoUrl.replace(/^\//, '')}`
+      : scenario.vendorLogoUrl;
+
     return {
       ...scenario,
       code,
+      vendorLogoUrl,
       expiryDate: scenario.expiryDate ? new Date(scenario.expiryDate) : undefined
     };
   }
