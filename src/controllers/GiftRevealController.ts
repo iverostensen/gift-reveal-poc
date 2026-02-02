@@ -299,7 +299,7 @@ export class GiftRevealController {
           </div>
 
           <div class="pickup-actions">
-            <a href="minegavekort://redeem?code=${pickupCode}" class="pickup-primary-btn">
+            <a href="no.igive.gavekort://" class="pickup-primary-btn">
               Åpne Mine Gavekort
             </a>
           </div>
@@ -349,9 +349,9 @@ export class GiftRevealController {
         <h1>Gavekortet er allerede hentet</h1>
         <p>Dette gavekortet på <strong>${gift.amount} kr</strong> til <strong>${gift.vendorName}</strong>
            er allerede lagt til i Mine Gavekort-appen.</p>
-        <button class="cta-button" onclick="alert('Ville åpnet Mine Gavekort-appen')">
+        <a href="no.igive.gavekort://" class="cta-button">
           Åpne Mine Gavekort
-        </button>
+        </a>
       </div>
     `;
   }
