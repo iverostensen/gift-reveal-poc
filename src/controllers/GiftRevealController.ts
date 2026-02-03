@@ -258,7 +258,7 @@ export class GiftRevealController {
 
   private showPickupCode(gift: Gift): void {
     // Generate a formatted pickup code for the POC
-    const pickupCode = 'HRF-R4K-TUE';
+    const pickupCode = 'EYA-BH9-L7V';
 
     this.container.innerHTML = `
       <div class="phone-frame">
