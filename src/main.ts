@@ -63,10 +63,10 @@ class App {
             <div class="imessage-date">${dateStr.charAt(0).toUpperCase() + dateStr.slice(1)} ${timeStr}</div>
 
             <div class="imessage-bubble received">
-              Hei Ola Halvorsen! Kari Nordmann har sendt deg et gavekort fra Scala Kjøpesentre.<br><br>Se gaven din her: <a href="/g/TEST1234" class="imessage-link">minegavekort.app/g/TEST1234</a><br><br>Hilsen oss i Scala Kjøpesentre
+              Hei Ola Halvorsen! Kari Nordmann har sendt deg et gavekort fra Oslobukta.<br><br>Se gaven din her: <a href="https://test.minegavekort.app/g/TESTOSLO" class="imessage-link">test.minegavekort.app/g/TESTOSLO</a><br><br>Hilsen oss i Oslobukta
             </div>
 
-            <a href="/g/TEST1234" class="imessage-link-preview" id="gift-link">
+            <a href="https://test.minegavekort.app/g/TESTOSLO" class="imessage-link-preview" id="gift-link">
               <div class="link-preview-image">
                 <span class="preview-gift-icon">🎁</span>
               </div>
